@@ -1,0 +1,6 @@
+halaman admin : localhost/namafolder/administrator
+
+username : admin
+password : admin
+
+Point of Sales adalah Aplikasi penjualan yang dikembangkan dan saat ini telah release versi pertama, insyaallah aplikasi ini akan kita kembangkan dari waktu ke waktu hingga bisa digunakan atau dinikmati oleh semua kalangan, mulai dari TOko kelontong dan Toko-toko besar insyaallah.. :)

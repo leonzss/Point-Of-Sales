@@ -1,0 +1,187 @@
+1. Membedakan hak akses admin dan kasir
+Saat ini modul untuk manajemen modul user belum 100% selesai. Jadi untuk memberikan hak akses untuk kasir baiknya modifikasi dari script langsung, dibuat kondisi saja di menu, contoh:
+<?php
+if ($this->session->level=='admin'){
+  include "menu-admin.php";
+}else{
+  include "menu-kasir.php";
+}
+?>
+
+Buka file "application/views/app/template.php"
+Lalu pada baris 333 cari : include "menu-admin.php";  
+Dan ubah menjadi seperti di atas : 
+if ($this->session->level=='admin'){
+  include "menu-admin.php";
+}else{
+  include "menu-kasir.php";
+}
+
+Selanjutnya pada folder yg sama buat file baru : menu-kasir.php
+Dan isikan menu-menu yang dibutuhkan oleh kasir, bisa dicontek saja dari file : menu-admin.php
+
+
+
+2. Membuat Laporan Harian, Bulanan dan Tahunan
+Buka "application/models/model_app.php" 
+Dibaris paling bawah tambahkan function baru untuk semua query, jadinya begini:
+
+<?php
+function hari_ini(){
+    return $this->db->query("SELECT c.kode_barang, c.nama_barang, sum(a.jumlah_jual) as terjual, b.waktu_proses FROM `mu_transaksi_detail` a JOIN mu_transaksi b ON a.id_transaksi=b.id_transaksi JOIN mu_barang c ON a.id_barang=c.id_barang  where SUBSTR(b.waktu_proses, 1,10)=DATE(NOW()) GROUP BY c.id_barang");
+}
+ 
+function minggu_ini(){
+    return $this->db->query("SELECT c.kode_barang, c.nama_barang, sum(a.jumlah_jual) as terjual, b.waktu_proses FROM `mu_transaksi_detail` a JOIN mu_transaksi b ON a.id_transaksi=b.id_transaksi JOIN mu_barang c ON a.id_barang=c.id_barang  where YEARWEEK(b.waktu_proses)=YEARWEEK(NOW()) GROUP BY c.id_barang");
+}
+ 
+function bulan_ini(){
+    return $this->db->query("SELECT c.kode_barang, c.nama_barang, sum(a.jumlah_jual) as terjual, b.waktu_proses FROM `mu_transaksi_detail` a JOIN mu_transaksi b ON a.id_transaksi=b.id_transaksi JOIN mu_barang c ON a.id_barang=c.id_barang  where MONTH(b.waktu_proses)=MONTH(NOW()) GROUP BY c.id_barang");
+}
+ 
+function tahun_ini(){
+    return $this->db->query("SELECT c.kode_barang, c.nama_barang, sum(a.jumlah_jual) as terjual, b.waktu_proses FROM `mu_transaksi_detail` a JOIN mu_transaksi b ON a.id_transaksi=b.id_transaksi JOIN mu_barang c ON a.id_barang=c.id_barang  where YEAR(b.waktu_proses)=YEAR(NOW()) GROUP BY c.id_barang");
+}
+?>
+
+Selanjutnya masuk ke Controller, "application/controller/app.php", tambahkan :
+<?php
+function laporan_harian(){
+	cek_session_admin();
+	$data = $this->model_app->hari_ini();
+    $data = array('record' => $data);
+	$this->template->load('app/template','app/mod_laporan/view_harian',$data);
+}
+?>
+
+Terakhir buat file baru pada folder "application/views/app/mod_laporan", 
+Nama filenya 'view_harian.php' seperti yang sudah dituliskan di atas, 
+Sekarang pada view_harian.php ini tinggal dibuat kode untuk menampilkan data :
+<?php 
+  $no = 1;
+  foreach ($record->result_array() as $row){
+  echo "<tr><td>$no</td>
+            <td>$row[kode_barang]</td>
+            <td>$row[nama_barang]</td>
+            <td>$row[terjual]</td>
+            <td>$row[waktu_proses]</td>
+        </tr>";
+    $no++;
+  }
+?>
+
+Selesai, simpan semuanya dan sekarang silahkan coba akses dengan alamat : 
+http://localhost/NAMAFOLDER/app/laporan_harian
+
+Maka laporan penjualan hari ini akan muncul
+Untuk membuat laporan mingguan, bulanan, tahunan juga sama persis caranya seperti yang sudah saya jelaskan di atas
+
+
+
+3. Menambah fitur print di menu laporan
+tambahkan button baru pada file laporannya, misalnya untuk laporan barang : 
+buka file "application/views/app/mod_laporan/view_barang.php", tambahkan pada baris ke 4 button print :
+<a class='btn btn-success btn-sm pull-right' target='_BLANK' href='<?php echo base_url()."laporan/print_laporan_barang"; ?>'>Print Laporan</a>
+ 
+Selanjutnya buka dengan text editor file "application/controller/Laporan.php"
+pada baris 4 sampai 11 copas untuk buat function baru dan perbaiki menjadi :
+<?php
+function print_laporan_barang(){
+	cek_session_admin();
+	$data['judul'] = 'Laporan Barang print';
+	$data = $this->model_laporan->view_barang();
+    $dataa = $this->model_app->view_one('mu_conf_barang',array('id_conf_barang' => 1),'id_conf_barang')->row_array();
+    $data = array('record' => $data, 'conf' => $dataa);
+	$this->load->view('app/mod_laporan/view_barang_print',$data);
+}
+?>
+ 
+Setelah selesai masuk lagi ke folder/directory : "application/views/app/mod_laporan"
+copas juga file view_barang.php dan ubah namanya menjadi "view_barang_print.php"
+selanjutnya buka dengan text editornya dan cari :
+<table id='example2' class='table table-bordered table-striped table-condensed'>
+ 
+ubah menjadi :
+<table width='100%' id='tablemodul1' class='table table-bordered table-striped table-condensed'>
+ 
+ terakhir pada bagian paling atas tambahkan :
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Print Data</title>
+  <link rel="stylesheet" type="text/css" href="<?php echo  base_url(); ?>asset/printer.css">
+</head>
+<body onload="window.print()">
+ 
+dan pada bagian paling bawah tambahkan :
+</body>
+</html>
+
+
+
+4. Laporan keuangan
+Untuk laporan keuangan pada belum sepenuhnya selesai.
+Jika mau aktifkan versi sederhananya bisa dengan cara berikut ini :
+1) buka file "application/controller/laporan.php"
+tambahkan function berikut :
+<?php
+function keuangan(){
+	cek_session_admin();
+	$data['judul'] = 'Laporan Keuangan';
+	$data['record'] = $this->model_laporan->view_penjualan('selesai');
+	$this->template->load('app/template','app/mod_laporan/view_keuangan',$data);
+}
+?>
+ 
+2) buka directory "application/views/app/mod_laporan"
+lalul didalamnya buat sebuah file baru "view_keuangan.php"
+isi dengan script berikut :
+ 
+<div class="col-xs-12">  
+  <div class="box">
+    <div class="box-header">
+      <h3 class="box-title">Laporan Data Keuangan</h3>
+    </div>
+    <div class="box-body">
+      <?php 
+        $total = $this->db->query("SELECT sum(jumlah_bayar) as total FROM mu_transaksi where status='selesai'")->row_array();
+        $beli = $this->db->query("SELECT SUM(harga_pembelian*jml_terima) as total FROM `mu_pembelian_terima_detail` a JOIN  mu_pembelian_terima b ON a.id_pembelian_terima=b.id_pembelian_terima")->row_array();
+        echo "<table class='table table-condensed table-bordered'>
+                <tr><td width=120px>Total Penjualan</td>  <td> : Rp ".rupiah($total['total'])."</td></tr>
+                <tr><td width=120px>Total Pembelian</td>  <td> : Rp ".rupiah($beli['total'])."</td></tr>
+              </table>";
+      ?>
+  </div>
+
+
+
+5. Jika Error dengan notif Unknown column 'b.ppn' in 'field list'
+Buka file "application/models/model_laporan.php"
+Cari public function view_pelanggan_tersering() dan ubah semuanya menjadi seperti ini :
+ 
+public function view_pelanggan_tersering(){
+return $this->db->query("select a.nama_pelanggan, a.alamat_pelanggan_1, a.kota, b.trx, c.total from
+                            (select x.*, y.name as kota from mu_pelanggan x JOIN mu_city y ON x.city_id=y.city_id) as a 
+                            LEFT JOIN
+                            (select id_pelanggan, COUNT(*) trx from mu_transaksi GROUP BY id_pelanggan HAVING COUNT(id_pelanggan)) as b on a.id_pelanggan=b.id_pelanggan
+                            LEFT JOIN
+                            (SELECT a.*, b.id_pelanggan, sum(a.jumlah_jual*a.jumlah_satuan*a.harga_jual-a.diskon_jual) as total FROM `mu_transaksi_detail` a JOIN mu_transaksi b ON a.id_transaksi=b.id_transaksi GROUP BY b.id_pelanggan) as c on a.id_pelanggan=c.id_pelanggan where b.trx >=1 ORDER BY b.trx DESC");
+}
+
+
+
+6. Menambahkan Total di laporan Penjualan
+Buka file "application/views/app/mod_laporan/view_penjualan.php"
+Dibagian bawah di atas tag </table> tambahkan :
+<?php
+$total = $this->db->query("SELECT sum(jumlah_bayar) as total FROM mu_transaksi where status='selesai'")->row_array();
+echo "<tr class='success'><td>-</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><b>".rupiah($total['total'])."</b></td>
+          <td></td>
+      </tr>";
+?>
