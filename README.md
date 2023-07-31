@@ -12,13 +12,13 @@ The Point of Sales system is designed to provide convenience in managing retail 
 It is a web-based program, meaning it runs on browsers like Mozilla Firefox, Internet Explorer, Google Chrome, and others, making it easy to use.
 
 #### Suitable for businesses such as:
-▪ Supermarkets / Minimarkets / Convenience stores
-▪ Computer / Mobile phone / Electronics / Wholesale / Office Supplies / Books / Photocopy shops
-▪ Building stores / Ceramics / Household items
-▪ Fashion stores / Boutiques / Distros / Bags / Shoes / Sandals / Jewelry / Men and Women Accessories
-▪ Furniture stores / Souvenirs / Cakes / Merchandise
-▪ Pharmacies / Automotive / Motorcycle Dealers / Showrooms / Employee Cooperatives / Cafes / Restaurants
-▪ And other business sectors
+1. Supermarkets / Minimarkets / Convenience stores
+2. Computer / Mobile phone / Electronics / Wholesale / Office Supplies / Books / Photocopy shops
+3. Building stores / Ceramics / Household items
+4. Fashion stores / Boutiques / Distros / Bags / Shoes / Sandals / Jewelry / Men and Women Accessories
+5. Furniture stores / Souvenirs / Cakes / Merchandise
+6. Pharmacies / Automotive / Motorcycle Dealers / Showrooms / Employee Cooperatives / Cafes / Restaurants
+7. And other business sectors
 
 Traditional cashier systems require manual monitoring of commodity inventory. However, with a computerized POS system, you don't have to worry about current stock levels. This system can track sales and provide real-time information, keeping your inventory records always up-to-date.
 
