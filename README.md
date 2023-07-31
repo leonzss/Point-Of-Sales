@@ -28,3 +28,16 @@ Traditional cashier systems require manual monitoring of commodity inventory. Ho
 3. Store sales data records.
 
 ## 🖥️ Screenshoot
+
+#### Login & Dashboard
+<div style="text-align: center;">
+    <ul style="list-style: none; padding: 0;">
+        <li> Login
+            <img src="screenshoot/Login.png"</img> 
+        </li>
+        <br>
+        <li> Dashboard
+            <img src="screenshoot/Dashboard.png"</img>
+        </li>
+    </ul>
+</div>
