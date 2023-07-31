@@ -1,4 +1,4 @@
-<p align="center"><img src="branding/emblem.svg" alt="Open Source Point of Sale Logo" width="auto" height="200"></p>
+<p align="center"><img src="assets/codeigniter-logo-svgrepo-com.svg" alt="Open Source Point of Sale Logo" width="auto" height="200"></p>
 <h3 align="center">Open Source Point of Sale</h3>
 
 <p align="center">
